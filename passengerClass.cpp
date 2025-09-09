@@ -1,3 +1,6 @@
+#include <string>
+using std::string;
+
 class Passenger {
 private:
     string name;

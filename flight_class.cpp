@@ -1,3 +1,26 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+class Passenger {
+public:
+    virtual ~Passenger() = default;
+    virtual void boardFlight() = 0;
+    virtual string getName() const = 0;
+    virtual string getSeatNo() const = 0;
+    virtual string getStatus() const = 0;
+};
+
+class BusinessPassenger : public Passenger {
+    // Implementation details will be in passenger_class.cpp
+};
+
+class EconomyPassenger : public Passenger {
+    // Implementation details will be in passenger_class.cpp
+};
+
 class Flight {
 private:
     string flightNo;
