@@ -22,10 +22,6 @@ public:
         gateNo = g;
     }
 
-    // stop copying (avoid ownership problems)
-    Flight(const Flight&) = delete;
-    Flight& operator=(const Flight&) = delete;
-
     // allow moving
     Flight(Flight&&) = default;
     Flight& operator=(Flight&&) = default;
