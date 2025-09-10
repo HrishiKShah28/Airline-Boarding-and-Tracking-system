@@ -17,7 +17,7 @@ void clearInput() {
 // print stylish header
 void printHeader() {
     cout << "\n=============================================\n";
-    cout << "         ✈️  Airline Boarding System  ✈️\n";
+    cout << "           Airline Boarding System           \n";
     cout << "=============================================\n";
 }
 
@@ -39,11 +39,11 @@ int main() {
     int choice;
     do {
         printHeader();
-        cout << "1️⃣  Add Business Class Passenger\n";
-        cout << "2️⃣  Add Economy Class Passenger\n";
-        cout << "3️⃣  Start Boarding\n";
-        cout << "4️⃣  Show Passenger Status\n";
-        cout << "0️⃣  Exit\n";
+        cout << "1. Add Business Class Passenger\n";
+        cout << "2. Add Economy Class Passenger\n";
+        cout << "3. Start Boarding\n";
+        cout << "4. Show Passenger Status\n";
+        cout << "0. Exit\n";
         cout << "---------------------------------------------\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -60,10 +60,10 @@ int main() {
 
             if (choice == 1) {
                 f.addPassenger(make_unique<BusinessPassenger>(name, passport, seat));
-                cout << "✅ Business passenger added successfully!\n";
+                cout << "Business passenger added successfully!\n";
             } else {
                 f.addPassenger(make_unique<EconomyPassenger>(name, passport, seat));
-                cout << "✅ Economy passenger added successfully!\n";
+                cout << "Economy passenger added successfully!\n";
             }
         }
         else if (choice == 3) {
@@ -73,7 +73,7 @@ int main() {
             f.showPassengerStatus();
         }
         else if (choice != 0) {
-            cout << "⚠️ Invalid choice! Try again.\n";
+            cout << "Invalid choice! Please try again.\n";
         }
 
         if (choice != 0) {
@@ -83,6 +83,6 @@ int main() {
 
     } while (choice != 0);
 
-    cout << "\n👋 Exiting Airline Boarding System. Safe travels!\n";
+    cout << "\nExiting Airline Boarding System. Safe travels!\n";
     return 0;
 }
