@@ -1,3 +1,6 @@
+#pragma once
+#include "Passenger.h"
+
 class EconomyPassenger : public Passenger {
 public:
     EconomyPassenger(string n, string p, string seat)

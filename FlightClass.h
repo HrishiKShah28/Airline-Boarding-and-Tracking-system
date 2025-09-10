@@ -6,8 +6,6 @@
 using namespace std;
 
 #include "Passenger.h"
-#include "BusinessClass.h"
-#include "EconomyClass.h"
 
 class Flight {
 private:
@@ -18,18 +16,13 @@ private:
     vector<unique_ptr<Passenger>> passengers;
 
 public:
-    Flight(string fNo, string src, string dest, string gate) {
-        flightNo = fNo;
-        source = src;
-        destination = dest;
-        gateNo = gate;
-    }
+    Flight(string fNo, string src, string dest, string gate)
+        : flightNo(move(fNo)), source(move(src)),
+          destination(move(dest)), gateNo(move(gate)) {}
 
-    // stop copy because unique_ptr cannot be copied
     Flight(const Flight&) = delete;
     Flight& operator=(const Flight&) = delete;
 
-    // allow moving
     Flight(Flight&&) = default;
     Flight& operator=(Flight&&) = default;
 
@@ -44,7 +37,7 @@ public:
 
         cout << "\n--- Boarding Passengers ---\n";
         for (auto &p : passengers) {
-            p->boardFlight();   // will call correct Business/Economy version
+            p->boardFlight();
         }
     }
 
