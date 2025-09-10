@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <memory>       // for unique_ptr
+#include <memory>     
 #include "passenger.h"
 
 class Flight {
