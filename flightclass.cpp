@@ -1,47 +1,53 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <memory>     
+#include <memory>
 #include "passenger.h"
+
+using namespace std;
 
 class Flight {
 private:
-    std::string flightNo;
-    std::string source, destination, gateNo;
-    std::vector<std::unique_ptr<Passenger>> passengers;
+    string flightNo;
+    string source;
+    string destination;
+    string gateNo;
+    vector<unique_ptr<Passenger>> passengers;
 
 public:
-    Flight(std::string f, std::string s, std::string d, std::string g)
-        : flightNo(std::move(f)), source(std::move(s)),
-          destination(std::move(d)), gateNo(std::move(g)) {}
+    Flight(string f, string s, string d, string g) {
+        flightNo = f;
+        source = s;
+        destination = d;
+        gateNo = g;
+    }
 
-    // Prevent accidental copying (double ownership)
+    // stop copying (avoid ownership problems)
     Flight(const Flight&) = delete;
     Flight& operator=(const Flight&) = delete;
 
-    // Allow moving if needed
+    // allow moving
     Flight(Flight&&) = default;
     Flight& operator=(Flight&&) = default;
 
-    void addPassenger(std::unique_ptr<Passenger> p) {
-        passengers.push_back(std::move(p));
+    void addPassenger(unique_ptr<Passenger> p) {
+        passengers.push_back(move(p));
     }
 
     void startBoarding() {
-        std::cout << "\nBoarding started for flight " << flightNo
-                  << " from " << source << " to " << destination
-                  << " at Gate " << gateNo << std::endl;
+        cout << "\nBoarding started for flight " << flightNo
+             << " from " << source << " to " << destination
+             << " at Gate " << gateNo << endl;
 
-        // Priority-based boarding
-        std::cout << "\n--- Business Class Boarding ---\n";
-        for (auto& p : passengers) {
+        cout << "\n--- Business Class Boarding ---\n";
+        for (auto &p : passengers) {
             if (p->getIsBusinessClass()) {
                 p->boardFlight();
             }
         }
 
-        std::cout << "\n--- Economy Class Boarding ---\n";
-        for (auto& p : passengers) {
+        cout << "\n--- Economy Class Boarding ---\n";
+        for (auto &p : passengers) {
             if (!p->getIsBusinessClass()) {
                 p->boardFlight();
             }
@@ -49,10 +55,10 @@ public:
     }
 
     void showPassengerStatus() const {
-        std::cout << "\nPassenger Status for flight " << flightNo << ":\n";
-        for (const auto& p : passengers) {
-            std::cout << "- " << p->getName() << " (" << p->getSeatNo()
-                      << ") : " << p->getStatus() << std::endl;
+        cout << "\nPassenger Status for flight " << flightNo << ":\n";
+        for (auto &p : passengers) {
+            cout << "- " << p->getName() << " (" << p->getSeatNo()
+                 << ") : " << p->getStatus() << endl;
         }
     }
 };
