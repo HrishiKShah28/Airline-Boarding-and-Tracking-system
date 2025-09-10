@@ -1,25 +1,8 @@
-#include <string>
-#include <vector>
 #include <iostream>
+#include <vector>
+#include "passenger.h" 
 
 using namespace std;
-
-class Passenger {
-public:
-    virtual ~Passenger() = default;
-    virtual void boardFlight() = 0;
-    virtual string getName() const = 0;
-    virtual string getSeatNo() const = 0;
-    virtual string getStatus() const = 0;
-};
-
-class BusinessPassenger : public Passenger {
-    // Implementation details will be in passenger_class.cpp
-};
-
-class EconomyPassenger : public Passenger {
-    // Implementation details will be in passenger_class.cpp
-};
 
 class Flight {
 private:
@@ -28,7 +11,6 @@ private:
     vector<Passenger*> passengers;
 
 public:
-
     Flight(string f, string s, string d, string g)
         : flightNo(f), source(s), destination(d), gateNo(g) {}
 
@@ -41,11 +23,10 @@ public:
              << " from " << source << " to " << destination
              << " at Gate " << gateNo << endl;
 
-        // Priority: Business first
         cout << "\n--- Business Class Boarding ---\n";
         for (auto p : passengers) {
             if (dynamic_cast<BusinessPassenger*>(p)) {
-                p->boardFlight();  // Polymorphism in action
+                p->boardFlight();
             }
         }
 
