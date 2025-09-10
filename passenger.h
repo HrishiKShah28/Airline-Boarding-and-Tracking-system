@@ -1,55 +1,71 @@
-#ifndef PASSENGER_H
-#define PASSENGER_H
-
+#pragma once
 #include <string>
-using std::string;
+#include <iostream>
 
 class Passenger {
-protected:
-    string name;
-    string passportNo;
-    string seatNo;
-    string status;
+public:
+    enum class Status { CheckedIn, BoardedBusiness, BoardedEconomy };
+
+private:
+    std::string name;
+    std::string passportNo;
+    std::string seatNo;
+    Status status;
     bool isBusinessClass;
 
-public:
-    Passenger(string n, string p, string seat, bool business)
-        : name(n), passportNo(p), seatNo(seat),
-          isBusinessClass(business), status("Checked-in") {}
+protected:
+    // Protected constructor so only derived classes can create passengers
+    Passenger(std::string n, std::string p, std::string seat, bool business)
+        : name(std::move(n)), passportNo(std::move(p)),
+          seatNo(std::move(seat)), isBusinessClass(business),
+          status(Status::CheckedIn) {}
 
+    void updateStatus(Status s) { status = s; }
+
+public:
     virtual ~Passenger() = default;
 
-    string getName() const { return name; }
-    string getPassportNo() const { return passportNo; }
-    string getSeatNo() const { return seatNo; }
-    string getStatus() const { return status; }
-    void updateStatus(string s) { status = s; }
+    // Getters (const-correct)
+    std::string getName() const { return name; }
+    std::string getPassportNo() const { return passportNo; }
+    std::string getSeatNo() const { return seatNo; }
+    bool getIsBusinessClass() const { return isBusinessClass; }
+    Status getStatusEnum() const { return status; }
 
-    virtual void boardFlight() = 0; // Pure virtual
+    // Convert status to readable string
+    std::string getStatus() const {
+        switch (status) {
+            case Status::CheckedIn: return "Checked-in";
+            case Status::BoardedBusiness: return "Boarded (Business)";
+            case Status::BoardedEconomy: return "Boarded (Economy)";
+        }
+        return "Unknown";
+    }
+
+    // Pure virtual → must implement in derived
+    virtual void boardFlight() = 0;
 };
 
 class BusinessPassenger : public Passenger {
 public:
-    BusinessPassenger(string n, string p, string seat)
-        : Passenger(n, p, seat, true) {}
+    BusinessPassenger(std::string n, std::string p, std::string seat)
+        : Passenger(std::move(n), std::move(p), std::move(seat), true) {}
 
     void boardFlight() override {
-        updateStatus("Boarded (Business)");
-        std::cout << "Business Passenger " << name
-                  << " (Seat " << seatNo << ") boarded.\n";
+        updateStatus(Status::BoardedBusiness);
+        std::cout << "Business Passenger " << getName()
+                  << " (Seat " << getSeatNo() << ") boarded.\n";
     }
 };
 
 class EconomyPassenger : public Passenger {
 public:
-    EconomyPassenger(string n, string p, string seat)
-        : Passenger(n, p, seat, false) {}
+    EconomyPassenger(std::string n, std::string p, std::string seat)
+        : Passenger(std::move(n), std::move(p), std::move(seat), false) {}
 
     void boardFlight() override {
-        updateStatus("Boarded (Economy)");
-        std::cout << "Economy Passenger " << name
-                  << " (Seat " << seatNo << ") boarded.\n";
+        updateStatus(Status::BoardedEconomy);
+        std::cout << "Economy Passenger " << getName()
+                  << " (Seat " << getSeatNo() << ") boarded.\n";
     }
 };
-
-#endif
