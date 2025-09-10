@@ -1,8 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <vector>
-#include <memory>
+#include <utility>   // for std::move
 using namespace std;
 
 #include "Passenger.h"
@@ -13,21 +12,37 @@ private:
     string source;
     string destination;
     string gateNo;
-    vector<unique_ptr<Passenger>> passengers;
+
+    Passenger* passengers[100] = {nullptr};  // fixed-size array of pointers
+    int passengerCount;                      // keep track of number of passengers
 
 public:
-    Flight(string fNo, string src, string dest, string gate)
-        : flightNo(move(fNo)), source(move(src)),
-          destination(move(dest)), gateNo(move(gate)) {}
+    // constructor takes const references for efficiency
+    Flight(const string& fNo, const string& src,
+           const string& dest, const string& gate)
+        : flightNo(fNo), source(src), destination(dest),
+          gateNo(gate), passengerCount(0) {}
 
+    ~Flight() {
+        // cleanup manually allocated passengers
+        for (int i = 0; i < passengerCount; i++) {
+            delete passengers[i];
+        }
+    }
+
+    // prevent copy
     Flight(const Flight&) = delete;
     Flight& operator=(const Flight&) = delete;
 
-    Flight(Flight&&) = default;
-    Flight& operator=(Flight&&) = default;
-
-    void addPassenger(unique_ptr<Passenger> p) {
-        passengers.push_back(move(p));
+    // add passenger using raw pointer
+    void addPassenger(Passenger* p) {
+        if (passengerCount < 100) {
+            passengers[passengerCount++] = p;
+            cout << "Passenger added successfully.\n";
+        } else {
+            cout << "Cannot add more passengers. Flight is full.\n";
+            delete p; // avoid memory leak
+        }
     }
 
     void startBoarding() {
@@ -36,16 +51,17 @@ public:
              << " at Gate " << gateNo << endl;
 
         cout << "\n--- Boarding Passengers ---\n";
-        for (auto &p : passengers) {
-            p->boardFlight();
+        for (int i = 0; i < passengerCount; i++) {
+            passengers[i]->boardFlight();
         }
     }
 
     void showPassengerStatus() const {
         cout << "\nPassenger Status for flight " << flightNo << ":\n";
-        for (auto &p : passengers) {
-            cout << "- " << p->getName() << " (" << p->getSeatNo()
-                 << ") : " << p->getStatus() << endl;
+        for (int i = 0; i < passengerCount; i++) {
+            cout << "- " << passengers[i]->getName()
+                 << " (" << passengers[i]->getSeatNo()
+                 << ") : " << passengers[i]->getStatus() << endl;
         }
     }
 };

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <memory>
+#include <string>
 #include <limits>
 using namespace std;
 
@@ -8,13 +8,7 @@ using namespace std;
 #include "EconomyClass.h"
 #include "FlightClass.h"
 
-// utility function for clear input
-void clearInput() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-}
-
-// print stylish header
+// menu header
 void printHeader() {
     cout << "\n=============================================\n";
     cout << "           Airline Boarding System           \n";
@@ -46,8 +40,15 @@ int main() {
         cout << "0. Exit\n";
         cout << "---------------------------------------------\n";
         cout << "Enter choice: ";
-        cin >> choice;
-        clearInput();
+
+        // input safety
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input! Please enter a number.\n";
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // flush newline
 
         if (choice == 1 || choice == 2) {
             string name, passport, seat;
@@ -59,11 +60,9 @@ int main() {
             getline(cin, seat);
 
             if (choice == 1) {
-                f.addPassenger(make_unique<BusinessPassenger>(name, passport, seat));
-                cout << "Business passenger added successfully!\n";
+                f.addPassenger(new BusinessPassenger(name, passport, seat));
             } else {
-                f.addPassenger(make_unique<EconomyPassenger>(name, passport, seat));
-                cout << "Economy passenger added successfully!\n";
+                f.addPassenger(new EconomyPassenger(name, passport, seat));
             }
         }
         else if (choice == 3) {
