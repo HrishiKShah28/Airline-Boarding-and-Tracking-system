@@ -5,8 +5,6 @@ The project was built using **Object-Oriented Programming (OOP)** concepts like 
 
 No database or external library was used — everything is implemented with **basic C++ only**.
 
----
-
 ## Features
 - **Passenger Management** – store passenger details (name, age, passport, etc.).
 - **Flight Management** – basic flight info handling.
@@ -17,12 +15,8 @@ No database or external library was used — everything is implemented with **ba
   - Extra baggage fare calculation
 - **Boarding Simulation** – shows when passengers are checked in and boarded.
 
----
-
 ## Technologies Used
 - Language: **C++**
 - Paradigm: **Object-Oriented Programming**
 - No DBMS used  
 - No external frameworks/libraries
-
----
