@@ -2,61 +2,61 @@
 using namespace std;
 
 class EconomyPassenger : public Passenger {
-    int baggageWeight;
-    bool mealIncluded;
-    double baseFare;
-    string seatNumber;
+    int bags;
+    bool meal;
+    double fare;
+    string seat;
 
 public:
     EconomyPassenger() : Passenger() {
-        baggageWeight = 0;
-        mealIncluded = false;
-        baseFare = 500.0;
-        seatNumber = "Not Assigned";
+        bags = 0;
+        meal = false;
+        fare = 500.0;
+        seat = "Not Assigned";
         cout << "Economy Passenger created (Default Constructor)" << endl;
     }
 
     EconomyPassenger(string id, string n, int a, string passport, 
-                     int bagWeight = 15, bool meal = false) 
+                     int b = 15, bool m = false) 
         : Passenger(id, n, a, passport) {
-        baggageWeight = bagWeight;
-        mealIncluded = meal;
-        baseFare = 500.0;
-        seatNumber = "Not Assigned";
+        bags = b;
+        meal = m;
+        fare = 500.0;
+        seat = "Not Assigned";
         cout << "Economy Passenger created for " << name << endl;
     }
 
-    void displayInfo() const {
+    void show() const {
         cout << "\nECONOMY CLASS" << endl;
         Passenger::displayInfo();
-        cout << "Baggage Weight: " << baggageWeight << " kg" << endl;
-        cout << "Meal Included: " << (mealIncluded ? "Yes" : "No") << endl;
-        cout << "Seat Number: " << seatNumber << endl;
-        cout << "Total Fare: Rupees " << calculateFare() << endl;
+        cout << "Baggage: " << bags << " kg" << endl;
+        cout << "Meal: " << (meal ? "Yes" : "No") << endl;
+        cout << "Seat: " << seat << endl;
+        cout << "Total Fare: Rs. " << totalFare() << endl;
     }
 
-    double calculateFare() {
-        double totalFare = baseFare;
-        if (baggageWeight > 20) totalFare += (baggageWeight - 20) * 15;
-        if (mealIncluded) totalFare += 25;
-        return totalFare;
+    double totalFare() {
+        double t = fare;
+        if (bags > 20) t += (bags - 20) * 15;
+        if (meal) t += 25;
+        return t;
     }
 
     void addMeal() {
-        mealIncluded = true;
-        cout << "Meal added for passenger " << name << endl;
+        meal = true;
+        cout << "Meal added for " << name << endl;
     }
 
-    void assignSeat(string seat) {
-        seatNumber = seat;
-        cout << "Seat " << seat << " assigned to " << name << endl;
+    void setSeat(string s) {
+        seat = s;
+        cout << "Seat " << s << " assigned to " << name << endl;
     }
 
-    void allocateExtraBaggage(int extraKg) {
-        int* extra = new int(extraKg);
-        baggageWeight += *extra;
-        cout << "Extra " << *extra << " kg baggage allocated to " << name << endl;
-        delete extra;
+    void addBags(int extra) {
+        int* x = new int(extra);
+        bags += *x;
+        cout << "Extra " << *x << " kg baggage added for " << name << endl;
+        delete x;
     }
 
     ~EconomyPassenger() {
@@ -64,11 +64,11 @@ public:
     }
 
     friend void compareFare(EconomyPassenger& p1, EconomyPassenger& p2) {
-        if (p1.calculateFare() > p2.calculateFare())
-            cout << p1.name << " has a higher fare." << endl;
-        else if (p1.calculateFare() < p2.calculateFare())
-            cout << p2.name << " has a higher fare." << endl;
+        if (p1.totalFare() > p2.totalFare())
+            cout << p1.name << " has higher fare." << endl;
+        else if (p1.totalFare() < p2.totalFare())
+            cout << p2.name << " has higher fare." << endl;
         else
-            cout << "Both passengers have equal fare." << endl;
+            cout << "Both have equal fare." << endl;
     }
 };
