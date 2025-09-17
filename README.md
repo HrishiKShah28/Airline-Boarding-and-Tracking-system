@@ -45,5 +45,3 @@ No database or external library was used — everything is implemented with **ba
 - **No STL / external libraries** – manual arrays and memory management  
 
 ---
-
-## 📂 File Structure
