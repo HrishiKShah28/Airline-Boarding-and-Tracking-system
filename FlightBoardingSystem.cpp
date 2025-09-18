@@ -66,6 +66,7 @@ private:
     bool priorityBoarding;
     int baggageAllowance;
     double baseFare;
+    friend void showBusinessDetails(const BusinessPassenger &bp);
 
 public:
     BusinessPassenger()
@@ -98,6 +99,16 @@ public:
         cout << "Lounge Access: " << (loungeAccess ? "Yes" : "No") << endl;
         cout << "Priority Boarding: " << (priorityBoarding ? "Yes" : "No") << endl;
         cout << "Baggage: " << baggageAllowance << " kg" << endl;
+    }
+    void showBusinessDetails(const BusinessPassenger &bp)
+    {
+        cout << "\n[Friend Function Access] Business Passenger Details" << endl;
+        cout << "Name: " << bp.getName() << endl; // accessing via public getter
+        // but can also directly access private members
+        cout << "Lounge Access: " << (bp.loungeAccess ? "Yes" : "No") << endl;
+        cout << "Priority Boarding: " << (bp.priorityBoarding ? "Yes" : "No") << endl;
+        cout << "Baggage Allowance: " << bp.baggageAllowance << " kg" << endl;
+        cout << "Base Fare: " << bp.baseFare << endl;
     }
 
     double totalFare() const
@@ -292,7 +303,10 @@ int main()
 
             if (choice == 1)
             {
-                f.addPassenger(new BusinessPassenger(name, passport, seat));
+                auto *bp = new BusinessPassenger(name, passport, seat);
+                f.addPassenger(bp);
+
+                showBusinessDetails(*bp);
             }
             else
             {
