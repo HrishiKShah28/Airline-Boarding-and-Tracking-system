@@ -111,6 +111,7 @@ public:
         cout << "Business Passenger " << getName() << " destroyed" << endl;
     }
 };
+
 void showBusinessDetails(const BusinessPassenger &bp)
 {
     cout << "\n[Friend Function Access] Business Passenger Details" << endl;
@@ -121,6 +122,7 @@ void showBusinessDetails(const BusinessPassenger &bp)
     cout << "Baggage Allowance: " << bp.baggageAllowance << " kg" << endl;
     cout << "Base Fare: " << bp.baseFare << endl;
 }
+
 class EconomyPassenger : public Passenger
 {
 private:
