@@ -9,7 +9,7 @@ private:
     string seatNo;
     Status status;
     bool isBusinessClass;
- 
+  
 protected:
     Passenger(string n, string p, string seat, bool business)
         : name(move(n)), passportNo(move(p)),
