@@ -50,3 +50,11 @@ public:
         cout << "Business Passenger " << getName() << " destroyed" << endl;
     }
 };
+
+void showBusinessDetails(const BusinessPassenger &bp)
+{
+    cout << "\n--- FRIEND FUNCTION ACCESS ---" << endl;
+    cout << "Details for: " << bp.getName() << endl;
+    cout << "Base Fare: $" << bp.fare << endl;
+    cout << "Has Lounge Access: " << (bp.lounge ? "Yes" : "No") << endl;
+}
