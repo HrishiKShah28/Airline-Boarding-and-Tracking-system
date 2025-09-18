@@ -170,7 +170,6 @@ public:
         cout << "Economy Passenger " << getName() << " destroyed" << endl;
     }
 };
-
 class Flight
 {
 private:
@@ -178,74 +177,91 @@ private:
     string source;
     string destination;
     string gate;
-    vector<Passenger *> passengers;
+
+    Passenger *passengers[100]; // fixed array
+    int passengerCount;         // keep track of count
 
 public:
     Flight(string fn, string src, string dest, string g)
-        : flightNumber(move(fn)), source(move(src)), destination(move(dest)), gate(move(g))
+        : flightNumber(fn), source(src), destination(dest), gate(g), passengerCount(0)
     {
-        cout << "\nFlight " << flightNumber << " from " << source << " to " << destination << " is ready for check-in at gate " << gate << "." << endl;
+        cout << "\nFlight " << flightNumber << " from " << source
+             << " to " << destination << " is ready for check-in at gate "
+             << gate << "." << endl;
     }
 
     ~Flight()
     {
-        for (Passenger *p : passengers)
+        for (int i = 0; i < passengerCount; i++)
         {
-            delete p;
+            delete passengers[i];
         }
     }
 
     void addPassenger(Passenger *p)
     {
-        passengers.push_back(p);
-        cout << "Passenger " << p->getName() << " added to flight " << flightNumber << "." << endl;
+        if (passengerCount < 100)
+        {
+            passengers[passengerCount++] = p;
+            cout << "Passenger " << p->getName()
+                 << " added to flight " << flightNumber << "." << endl;
+        }
+        else
+        {
+            cout << "Cannot add more passengers! Flight is full." << endl;
+            delete p; // prevent memory leak
+        }
     }
 
     void startBoarding()
     {
         cout << "\n=============================================\n";
-        cout << "==========Now Boarding Flight " << flightNumber << "\n";
+        cout << "========== Now Boarding Flight " << flightNumber << " ==========\n";
         cout << "=============================================\n";
 
         cout << "\n--- Boarding Business Class ---\n";
-        for (Passenger *p : passengers)
+        for (int i = 0; i < passengerCount; i++)
         {
-            if (p->getIsBusinessClass() && p->getStatusEnum() == Passenger::Status::CheckedIn)
+            if (passengers[i]->getIsBusinessClass() &&
+                passengers[i]->getStatusEnum() == Passenger::Status::CheckedIn)
             {
-                p->boardFlight();
+                passengers[i]->boardFlight();
             }
         }
 
         cout << "\n--- Boarding Economy Class ---\n";
-        for (Passenger *p : passengers)
+        for (int i = 0; i < passengerCount; i++)
         {
-            if (!p->getIsBusinessClass() && p->getStatusEnum() == Passenger::Status::CheckedIn)
+            if (!passengers[i]->getIsBusinessClass() &&
+                passengers[i]->getStatusEnum() == Passenger::Status::CheckedIn)
             {
-                p->boardFlight();
+                passengers[i]->boardFlight();
             }
         }
+
         cout << "\nBoarding is complete.\n";
     }
 
     void showPassengerStatus()
     {
         cout << "\n=============================================\n";
-        cout << "=========Passenger Status for Flight " << flightNumber << "\n";
+        cout << "========= Passenger Status for Flight " << flightNumber << " ==========\n";
         cout << "=============================================\n";
-        if (passengers.empty())
+
+        if (passengerCount == 0)
         {
             cout << "No passengers have been added to this flight yet.\n";
             return;
         }
-        for (const Passenger *p : passengers)
+
+        for (int i = 0; i < passengerCount; i++)
         {
-            cout << " > Passenger: " << p->getName()
-                 << ", Seat: " << p->getSeatNo()
-                 << ", Status: " << p->getStatus() << endl;
+            cout << " > Passenger: " << passengers[i]->getName()
+                 << ", Seat: " << passengers[i]->getSeatNo()
+                 << ", Status: " << passengers[i]->getStatus() << endl;
         }
     }
 };
-
 void printHeader()
 {
     cout << "\n=============================================\n";
