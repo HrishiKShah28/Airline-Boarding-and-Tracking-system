@@ -1,4 +1,4 @@
-
+ 
 class Passenger {
 public:
     enum class Status { CheckedIn, BoardedBusiness, BoardedEconomy };
