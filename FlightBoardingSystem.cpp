@@ -1,6 +1,7 @@
 #include <iostream>
-#include <vector>
+#include <string>
 #include <limits>
+#include <utility>
 
 using namespace std;
 
@@ -60,23 +61,23 @@ public:
 class BusinessPassenger : public Passenger
 {
 private:
-    bool lounge;
-    bool priority;
-    int baggage;
-    double fare;
+    bool loungeAccess;
+    bool priorityBoarding;
+    int baggageAllowance;
+    double baseFare;
     friend void showBusinessDetails(const BusinessPassenger &bp);
 
 public:
     BusinessPassenger()
-        : Passenger("", "", "", true), lounge(true), priority(true),
-          baggage(40), fare(1500.0)
+        : Passenger("", "", "", true), loungeAccess(true), priorityBoarding(true),
+          baggageAllowance(40), baseFare(1500.0)
     {
         cout << "Business Passenger created (Default Constructor)" << endl;
     }
 
-    BusinessPassenger(string nm, string pp, string st)
-        : Passenger(move(nm), move(pp), move(st), true), lounge(true),
-          priority(true), baggage(40), fare(1500.0)
+    BusinessPassenger(string n, string p, string seat)
+        : Passenger(move(n), move(p), move(seat), true), loungeAccess(true),
+          priorityBoarding(true), baggageAllowance(40), baseFare(1500.0)
     {
         cout << "Business Passenger created for " << getName() << endl;
     }
@@ -94,14 +95,14 @@ public:
         cout << "Passport No: " << getPassportNo() << endl;
         cout << "Seat No: " << getSeatNo() << endl;
         cout << "Status: " << getStatus() << endl;
-        cout << "Lounge Access: " << (lounge ? "Yes" : "No") << endl;
-        cout << "Priority Boarding: " << (priority ? "Yes" : "No") << endl;
-        cout << "Baggage: " << baggage << " kg" << endl;
+        cout << "Lounge Access: " << (loungeAccess ? "Yes" : "No") << endl;
+        cout << "Priority Boarding: " << (priorityBoarding ? "Yes" : "No") << endl;
+        cout << "Baggage: " << baggageAllowance << " kg" << endl;
     }
 
     double totalFare() const
     {
-        return fare;
+        return baseFare;
     }
 
     ~BusinessPassenger()
@@ -109,26 +110,34 @@ public:
         cout << "Business Passenger " << getName() << " destroyed" << endl;
     }
 };
-
 void showBusinessDetails(const BusinessPassenger &bp)
 {
-    cout << "\n--- FRIEND FUNCTION ACCESS ---" << endl;
-    cout << "Details for: " << bp.getName() << endl;
-    cout << "Base Fare: $" << bp.fare << endl;
-    cout << "Has Lounge Access: " << (bp.lounge ? "Yes" : "No") << endl;
+    cout << "\n[Friend Function Access] Business Passenger Details" << endl;
+    cout << "Name: " << bp.getName() << endl; // accessing via public getter
+    // but can also directly access private members
+    cout << "Lounge Access: " << (bp.loungeAccess ? "Yes" : "No") << endl;
+    cout << "Priority Boarding: " << (bp.priorityBoarding ? "Yes" : "No") << endl;
+    cout << "Baggage Allowance: " << bp.baggageAllowance << " kg" << endl;
+    cout << "Base Fare: " << bp.baseFare << endl;
 }
-
 class EconomyPassenger : public Passenger
 {
 private:
-    int baggage;
-    bool meal;
-    double fare;
+    int baggageAllowance;
+    bool mealIncluded;
+    double baseFare;
 
 public:
-    EconomyPassenger(string nm, string pp, string st)
-        : Passenger(nm, pp, st, false), baggage(20),
-          meal(false), fare(500.0)
+    EconomyPassenger()
+        : Passenger("", "", "", false), baggageAllowance(20),
+          mealIncluded(false), baseFare(500.0)
+    {
+        cout << "Economy Passenger created (Default Constructor)" << endl;
+    }
+
+    EconomyPassenger(string n, string p, string seat)
+        : Passenger(move(n), move(p), move(seat), false), baggageAllowance(20),
+          mealIncluded(false), baseFare(500.0)
     {
         cout << "Economy Passenger created for " << getName() << endl;
     }
@@ -146,14 +155,13 @@ public:
         cout << "Passport No: " << getPassportNo() << endl;
         cout << "Seat No: " << getSeatNo() << endl;
         cout << "Status: " << getStatus() << endl;
-        cout << "Baggage: " << baggage << " kg" << endl;
-        cout << "Meal Included: " << (meal ? "Yes" : "No") << endl;
-        cout << "Total Fare: $" << totalFare() << endl;
+        cout << "Baggage: " << baggageAllowance << " kg" << endl;
+        cout << "Meal Included: " << (mealIncluded ? "Yes" : "No") << endl;
     }
 
     double totalFare() const
     {
-        return fare;
+        return baseFare;
     }
 
     ~EconomyPassenger()
