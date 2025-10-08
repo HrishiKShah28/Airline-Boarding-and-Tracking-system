@@ -31,7 +31,7 @@ protected:
     void updateStatus(Status s) { status = s; }
 
 public:
-    ~Passenger() = default;
+    virtual ~Passenger() = default; // Make destructor virtual for base class
 
     string getName() const { return name; }
     string getPassportNo() const { return passportNo; }
@@ -52,7 +52,8 @@ public:
         }
         return "Unknown";
     }
-    void boardFlight()
+    // Make boardFlight a virtual function so derived classes can override it
+    virtual void boardFlight()
     {
     }
 };
@@ -81,13 +82,13 @@ public:
         cout << "Business Passenger created for " << getName() << endl;
     }
 
-    void boardFlight()
+    void boardFlight() override
     {
         updateStatus(Status::BoardedBusiness);
         cout << "PRIORITY BOARDING: Business passenger " << getName() << " has boarded." << endl;
     }
 
-    void show() const
+    virtual void show() const
     {
         cout << "\n--- BUSINESS CLASS PASSENGER ---" << endl;
         cout << "Name: " << getName() << endl;
@@ -109,6 +110,47 @@ public:
         cout << "Business Passenger " << getName() << " destroyed" << endl;
     }
 };
+
+// =================================================================
+// START: MULTILEVEL INHERITANCE IMPLEMENTATION
+// Chain: FirstClassPassenger -> BusinessPassenger -> Passenger
+// =================================================================
+class FirstClassPassenger : public BusinessPassenger
+{
+private:
+    bool hasPrivateSuite;
+
+public:
+    FirstClassPassenger(string n, string p, string seat)
+        : BusinessPassenger(n, p, seat), hasPrivateSuite(true)
+    {
+        cout << "First Class Passenger created for " << getName() << endl;
+    }
+
+    // Override boardFlight for First Class
+    void boardFlight() override
+    {
+        updateStatus(Status::BoardedBusiness); // Re-using Business status for simplicity
+        cout << "ULTRA PRIORITY BOARDING: First Class passenger " << getName() << " has boarded to their private suite." << endl;
+    }
+
+    // Override show to add First Class details
+    void show() const override
+    {
+        // Call the parent's show method first
+        BusinessPassenger::show();
+        // Add new details
+        cout << "Private Suite: " << (hasPrivateSuite ? "Yes" : "No") << endl;
+    }
+
+    ~FirstClassPassenger()
+    {
+        cout << "First Class Passenger " << getName() << " destroyed" << endl;
+    }
+};
+// =================================================================
+// END: MULTILEVEL INHERITANCE IMPLEMENTATION
+// =================================================================
 
 void showBusinessDetails(const BusinessPassenger &bp)
 {
@@ -142,7 +184,7 @@ public:
         cout << "Economy Passenger created for " << getName() << endl;
     }
 
-    void boardFlight()
+    void boardFlight() override
     {
         updateStatus(Status::BoardedEconomy);
         cout << "Economy passenger " << getName() << " has boarded." << endl;
@@ -169,6 +211,54 @@ public:
         cout << "Economy Passenger " << getName() << " destroyed" << endl;
     }
 };
+
+// =================================================================
+// START: MULTIPLE INHERITANCE IMPLEMENTATION
+// A new base class representing an airline employee
+// =================================================================
+class AirlineStaff
+{
+private:
+    string employeeId;
+
+public:
+    AirlineStaff(string id) : employeeId(id) {}
+    string getEmployeeId() const { return employeeId; }
+    void showStaffDetails() const
+    {
+        cout << "Employee ID: " << employeeId << endl;
+        cout << "Travel Type: Staff on Duty" << endl;
+    }
+    virtual ~AirlineStaff() { cout << "AirlineStaff object destroyed" << endl; }
+};
+
+// This class inherits from both a passenger type and a staff type
+class StaffPassenger : public EconomyPassenger, public AirlineStaff
+{
+public:
+    StaffPassenger(string n, string p, string seat, string empId)
+        : EconomyPassenger(n, p, seat), AirlineStaff(empId)
+    {
+        cout << "Staff Passenger created for " << getName() << " (ID: " << getEmployeeId() << ")" << endl;
+    }
+
+    // New show() method to display combined info
+    void show() const
+    {
+        // Call parent's show method
+        EconomyPassenger::show();
+        // Show staff details
+        showStaffDetails();
+    }
+
+    ~StaffPassenger()
+    {
+        cout << "Staff Passenger " << getName() << " destroyed" << endl;
+    }
+};
+// =================================================================
+// END: MULTIPLE INHERITANCE IMPLEMENTATION
+// =================================================================
 
 class Flight
 {
@@ -286,7 +376,7 @@ public:
 void printHeader()
 {
     cout << "\n=============================================\n";
-    cout << "           Airline Boarding System           \n";
+    cout << "          Airline Boarding System          \n";
     cout << "=============================================\n";
 }
 
@@ -315,6 +405,8 @@ int main()
         cout << "3. Start Boarding\n";
         cout << "4. Show Passenger Status\n";
         cout << "5. Add Passenger (using Overloaded Function)\n";
+        cout << "6. Add First Class Passenger (Multilevel Inheritance)\n";
+        cout << "7. Add Staff Passenger (Multiple Inheritance)\n";
         cout << "0. Exit\n";
         cout << "---------------------------------------------\n";
         cout << "Enter choice: ";
@@ -373,6 +465,30 @@ int main()
 
             bool business = (type == 1);
             f.addPassenger(name, passport, seat, business);
+        }
+        else if (choice == 6) // Handle First Class Passenger
+        {
+            string name, passport, seat;
+            cout << "\nEnter First Class Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Passport No: ";
+            getline(cin, passport);
+            cout << "Enter Seat No: ";
+            getline(cin, seat);
+            f.addPassenger(new FirstClassPassenger(name, passport, seat));
+        }
+        else if (choice == 7) // Handle Staff Passenger
+        {
+            string name, passport, seat, empId;
+            cout << "\nEnter Staff Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Passport No: ";
+            getline(cin, passport);
+            cout << "Enter Seat No: ";
+            getline(cin, seat);
+            cout << "Enter Employee ID: ";
+            getline(cin, empId);
+            f.addPassenger(new StaffPassenger(name, passport, seat, empId));
         }
         else if (choice != 0)
         {
