@@ -1,57 +1,111 @@
-✈️ Airline Boarding and Tracking System
-This is a C++ project that simulates an airline boarding and passenger tracking system.
-It is built entirely with Object-Oriented Programming (OOP) concepts, demonstrating a comprehensive class hierarchy with hierarchical, multilevel, and multiple inheritance. The system also showcases polymorphism, constructors, destructors, function overloading, and friend functions.
+# ✈️ Airline Boarding and Tracking System  
 
-No database or external library was used — everything is implemented with standard C++ only, using manual dynamic arrays and memory management instead of the STL.
+This is a **C++ OOP project** that simulates a real-world **airline passenger boarding system**.  
+It demonstrates concepts such as **inheritance (single, multilevel, and multiple)**, **polymorphism**, **constructors/destructors**, **virtual functions**, and **friend functions** — all implemented **without STL or databases**.  
 
-📌 Features
-Passenger Management
+Everything is done using **manual arrays** and **dynamic memory allocation** to manage passengers efficiently.  
 
-Stores passenger details (name, passport, seat, and boarding status).
+---
 
-Utilizes a base Passenger class with several specialized derived classes.
+## 🎯 Core Features  
 
-Complex Class Hierarchy
+### 🧍 Passenger Management  
+- Stores passenger details like **name**, **passport number**, **seat number**, **status**, and **class type**.  
+- Supports **Business**, **Economy**, **First Class**, and **Staff** passenger categories.  
+- Maintains status updates — *Checked-in*, *Boarded (Business)*, *Boarded (Economy)*.  
 
-Hierarchical Inheritance: BusinessPassenger and EconomyPassenger inherit from Passenger.
+---
 
-Multilevel Inheritance: FirstClassPassenger inherits from BusinessPassenger, creating the chain: FirstClassPassenger -> BusinessPassenger -> Passenger.
+### 🛫 Flight Management  
+- Each **Flight** object stores flight details:  
+  - Flight Number ✈️  
+  - Source & Destination 🌍  
+  - Gate Number 🛗  
+- Manages passengers using **manual dynamic arrays (no STL)**.  
+- Supports **auto-resizing** when passenger capacity is exceeded.  
 
-Multiple Inheritance: StaffPassenger inherits from both EconomyPassenger and a new AirlineStaff base class, combining attributes from both.
+---
 
-Flight Management
+### 💼 Business Class (Single Inheritance)  
+- Derived from `Passenger` class.  
+- Includes:  
+  - Lounge Access ✔️  
+  - Priority Boarding ✔️  
+  - Higher Baggage Allowance (40 kg) ✔️  
+- Base fare: **₹1500**  
+- Overrides `boardFlight()` with **priority boarding** message.  
+- Uses **friend function** `showBusinessDetails()` to display private data.  
 
-Handles flight details (number, source, destination, gate).
+---
 
-Maintains a dynamic array of Passenger pointers, capable of holding any passenger type (demonstrating polymorphism).
+### 🪑 Economy Class (Single Inheritance)  
+- Derived from `Passenger` class.  
+- Includes:  
+  - Standard Baggage (20 kg)  
+  - Optional Meal (default: No)  
+- Base fare: **₹500**  
+- Regular boarding after Business class passengers.  
 
-The passenger list automatically resizes when its capacity is reached.
+---
 
-Boarding Simulation
+### 👑 First Class Passenger (Multilevel Inheritance)  
+- Derived from **BusinessPassenger → Passenger** (multilevel).  
+- Adds a **private suite** feature.  
+- Overrides `boardFlight()` for *ultra-priority boarding*.  
+- Demonstrates **method overriding and reusability**.  
 
-Demonstrates polymorphism by calling virtual boardFlight() methods.
+---
 
-First Class and Business passengers board first (priority boarding).
+### 👷 Staff Passenger (Multiple Inheritance)  
+- Inherits from both **EconomyPassenger** and **AirlineStaff**.  
+- Represents **airline employees traveling on duty**.  
+- Displays both **passenger** and **staff details** (via multiple inheritance).  
+- Demonstrates **diamond ambiguity resolution** and **explicit constructor chaining**.  
 
-Economy and Staff passengers board after premium classes.
+---
 
-Tracks and displays the live status of each passenger (Checked-in or Boarded).
+## 🧠 Object-Oriented Concepts Demonstrated  
 
-Demonstration of Various OOP Concepts
+| Concept | Implementation Example |
+|----------|------------------------|
+| **Encapsulation** | Private data members (name, passport, status) |
+| **Inheritance** | Business, Economy, FirstClass, Staff classes |
+| **Multilevel Inheritance** | FirstClass → Business → Passenger |
+| **Multiple Inheritance** | StaffPassenger → (EconomyPassenger, AirlineStaff) |
+| **Polymorphism** | Virtual `boardFlight()` and `show()` functions |
+| **Friend Function** | `showBusinessDetails()` accesses private data |
+| **Constructors & Destructors** | Show lifecycle of objects dynamically |
+| **Dynamic Memory Allocation** | Manual passenger array resizing in `Flight` class |
 
-Polymorphism: The Flight class manages all passenger types through a Passenger* pointer array.
+---
 
-Function Overloading: The Flight::addPassenger method is overloaded for different ways of adding passengers.
+## 🧾 Boarding Flow Simulation  
 
-Friend Function: A global function showBusinessDetails can access the private members of the BusinessPassenger class.
+1. Add passengers of any type (Business, Economy, First Class, or Staff).  
+2. Start boarding sequence:  
+   - **Business & First Class** board first (priority).  
+   - **Economy & Staff** board next.  
+3. View updated passenger statuses live.  
 
-Virtual Functions: Functions like boardFlight() and show() are declared virtual to allow for overriding in derived classes.
+---
 
-🛠️ Technologies Used
-Language: C++
+## 🖥️ Menu Options (Main Program)  
 
-Paradigm: Object-Oriented Programming (OOP)
+| Option | Description |
+|---------|-------------|
+| 1 | Add Business Class Passenger |
+| 2 | Add Economy Class Passenger |
+| 3 | Start Boarding |
+| 4 | Show Passenger Status |
+| 5 | Add Passenger (via Overloaded Function) |
+| 6 | Add First Class Passenger (Multilevel Inheritance) |
+| 7 | Add Staff Passenger (Multiple Inheritance) |
+| 0 | Exit the Program |
 
-No DBMS used
+---
 
-No STL / external libraries – manual arrays and dynamic memory management only.
+## ⚙️ Technologies Used  
+- **Language:** C++  
+- **Concepts:** OOP (Encapsulation, Inheritance, Polymorphism, Friend Function)  
+- **Memory:** Manual Dynamic Allocation (No STL containers)  
+- **Input/Output:** Standard Console (No file handling, no database)
