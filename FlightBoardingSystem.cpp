@@ -1,7 +1,5 @@
 #include <iostream>
 #include <string>
-#include <new> // Required for std::bad_alloc
-#include <stdexcept> // Required for std::exception
 
 using namespace std;
 
@@ -275,18 +273,14 @@ private:
 
 public:
     Flight(string fn, string src, string dest, string g)
-        : flightNumber(fn), source(src), destination(dest), gate(g), passengers(nullptr), passengerCount(0), capacity(10)
+        : flightNumber(fn), source(src), destination(dest), gate(g)
     {
         cout << "\nFlight " << flightNumber << " from " << source << " to " << destination
              << " is ready for check-in at gate " << gate << "." << endl;
-        
-        // Use try-catch for the initial memory allocation.
-        try {
-            passengers = new Passenger*[capacity];
-        } catch (const std::bad_alloc& e) {
-            cerr << "FATAL: Memory allocation failed for flight passengers list. " << e.what() << endl;
-            throw; // Re-throw exception to be caught in main.
-        }
+
+        capacity = 10;
+        passengerCount = 0;
+        passengers = new Passenger *[capacity];
     }
 
     ~Flight()
@@ -301,7 +295,7 @@ public:
     void addPassenger(Passenger *p)
     {
         if (passengerCount >= capacity)
-            resize(); // This might throw an exception.
+            resize();
         passengers[passengerCount++] = p;
         cout << "Passenger " << p->getName() << " added to flight " << flightNumber << "." << endl;
     }
@@ -309,20 +303,12 @@ public:
     void addPassenger(const string &n, const string &p, const string &seat, bool business)
     {
         if (passengerCount >= capacity)
-            resize(); // This might throw an exception.
-        
-        Passenger* np = nullptr;
-        // Use try-catch for creating new passenger objects.
-        try {
-            if (business)
-                np = new BusinessPassenger(n, p, seat);
-            else
-                np = new EconomyPassenger(n, p, seat);
-        } catch (const std::bad_alloc& e) {
-            cerr << "ERROR: Failed to create passenger object. Not enough memory. " << e.what() << endl;
-            throw; // Re-throw to be caught by main.
-        }
-        
+            resize();
+        Passenger *np;
+        if (business)
+            np = new BusinessPassenger(n, p, seat);
+        else
+            np = new EconomyPassenger(n, p, seat);
         passengers[passengerCount++] = np;
         cout << "Passenger " << np->getName() << " added to flight " << flightNumber
              << " using overloaded function." << endl;
@@ -330,21 +316,14 @@ public:
 
     void resize()
     {
-        // Use try-catch for resizing the dynamic array.
-        try {
-            capacity *= 2;
-            Passenger **temp = new Passenger *[capacity];
-            for (int i = 0; i < passengerCount; i++)
-            {
-                temp[i] = passengers[i];
-            }
-            delete[] passengers;
-            passengers = temp;
-            cout << "[System] Flight passenger capacity increased to " << capacity << endl;
-        } catch (const std::bad_alloc& e) {
-            cerr << "ERROR: Failed to resize passenger list. Not enough memory. " << e.what() << endl;
-            throw; // Re-throw to be caught by main.
+        capacity *= 2;
+        Passenger **temp = new Passenger *[capacity];
+        for (int i = 0; i < passengerCount; i++)
+        {
+            temp[i] = passengers[i];
         }
+        delete[] passengers;
+        passengers = temp;
     }
 
     void startBoarding()
@@ -397,154 +376,132 @@ public:
 void printHeader()
 {
     cout << "\n=============================================\n";
-    cout << "           Airline Boarding System           \n";
+    cout << "          Airline Boarding System          \n";
     cout << "=============================================\n";
 }
 
 int main()
 {
-    try 
+    string flightNo, src, dest, gate;
+
+    printHeader();
+    cout << "Enter Flight Number: ";
+    getline(cin, flightNo);
+    cout << "Enter Source: ";
+    getline(cin, src);
+    cout << "Enter Destination: ";
+    getline(cin, dest);
+    cout << "Enter Gate Number: ";
+    getline(cin, gate);
+
+    Flight f(flightNo, src, dest, gate);
+
+    int choice;
+    do
     {
-        string flightNo, src, dest, gate;
-
         printHeader();
-        cout << "Enter Flight Number: ";
-        getline(cin, flightNo);
-        cout << "Enter Source: ";
-        getline(cin, src);
-        cout << "Enter Destination: ";
-        getline(cin, dest);
-        cout << "Enter Gate Number: ";
-        getline(cin, gate);
+        cout << "1. Add Business Class Passenger\n";
+        cout << "2. Add Economy Class Passenger\n";
+        cout << "3. Start Boarding\n";
+        cout << "4. Show Passenger Status\n";
+        cout << "5. Add Passenger (using Overloaded Function)\n";
+        cout << "6. Add First Class Passenger (Multilevel Inheritance)\n";
+        cout << "7. Add Staff Passenger (Multiple Inheritance)\n";
+        cout << "0. Exit\n";
+        cout << "---------------------------------------------\n";
+        cout << "Enter choice: ";
 
-        Flight f(flightNo, src, dest, gate);
-
-        int choice;
-        do
+        if (!(cin >> choice))
         {
-            printHeader();
-            cout << "1. Add Business Class Passenger\n";
-            cout << "2. Add Economy Class Passenger\n";
-            cout << "3. Start Boarding\n";
-            cout << "4. Show Passenger Status\n";
-            cout << "5. Add Passenger (using Overloaded Function)\n";
-            cout << "6. Add First Class Passenger (Multilevel Inheritance)\n";
-            cout << "7. Add Staff Passenger (Multiple Inheritance)\n";
-            cout << "0. Exit\n";
-            cout << "---------------------------------------------\n";
-            cout << "Enter choice: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid input! Please enter a number.\n";
+            continue;
+        }
+        cin.ignore(10000, '\n');
 
-            if (!(cin >> choice))
+        if (choice == 1 || choice == 2)
+        {
+            string name, passport, seat;
+            cout << "\nEnter Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Passport No: ";
+            getline(cin, passport);
+            cout << "Enter Seat No: ";
+            getline(cin, seat);
+
+            if (choice == 1)
             {
-                cin.clear();
-                cin.ignore(10000, '\n');
-                cout << "Invalid input! Please enter a number.\n";
-                continue;
+                auto *bp = new BusinessPassenger(name, passport, seat);
+                f.addPassenger(bp);
+                showBusinessDetails(*bp);
             }
+            else
+            {
+                f.addPassenger(new EconomyPassenger(name, passport, seat));
+            }
+        }
+        else if (choice == 3)
+        {
+            f.startBoarding();
+        }
+        else if (choice == 4)
+        {
+            f.showPassengerStatus();
+        }
+        else if (choice == 5)
+        {
+            string name, passport, seat;
+            int type;
+            cout << "\nEnter Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Passport No: ";
+            getline(cin, passport);
+            cout << "Enter Seat No: ";
+            getline(cin, seat);
+            cout << "Enter Class (1 = Business, 2 = Economy): ";
+            cin >> type;
             cin.ignore(10000, '\n');
 
-            if (choice == 1 || choice == 2)
-            {
-                string name, passport, seat;
-                cout << "\nEnter Passenger Name: ";
-                getline(cin, name);
-                cout << "Enter Passport No: ";
-                getline(cin, passport);
-                cout << "Enter Seat No: ";
-                getline(cin, seat);
+            bool business = (type == 1);
+            f.addPassenger(name, passport, seat, business);
+        }
+        else if (choice == 6) // Handle First Class Passenger
+        {
+            string name, passport, seat;
+            cout << "\nEnter First Class Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Passport No: ";
+            getline(cin, passport);
+            cout << "Enter Seat No: ";
+            getline(cin, seat);
+            f.addPassenger(new FirstClassPassenger(name, passport, seat));
+        }
+        else if (choice == 7) // Handle Staff Passenger
+        {
+            string name, passport, seat, empId;
+            cout << "\nEnter Staff Passenger Name: ";
+            getline(cin, name);
+            cout << "Enter Passport No: ";
+            getline(cin, passport);
+            cout << "Enter Seat No: ";
+            getline(cin, seat);
+            cout << "Enter Employee ID: ";
+            getline(cin, empId);
+            f.addPassenger(new StaffPassenger(name, passport, seat, empId));
+        }
+        else if (choice != 0)
+        {
+            cout << "Invalid choice! Please try again.\n";
+        }
 
-                if (choice == 1)
-                {
-                    auto *bp = new BusinessPassenger(name, passport, seat);
-                    f.addPassenger(bp);
-                    showBusinessDetails(*bp);
-                }
-                else
-                {
-                    f.addPassenger(new EconomyPassenger(name, passport, seat));
-                }
-            }
-            else if (choice == 3)
-            {
-                f.startBoarding();
-            }
-            else if (choice == 4)
-            {
-                f.showPassengerStatus();
-            }
-            else if (choice == 5)
-            {
-                string name, passport, seat;
-                int type;
-                cout << "\nEnter Passenger Name: ";
-                getline(cin, name);
-                cout << "Enter Passport No: ";
-                getline(cin, passport);
-                cout << "Enter Seat No: ";
-                getline(cin, seat);
-                cout << "Enter Class (1 = Business, 2 = Economy): ";
-                cin >> type;
-                cin.ignore(10000, '\n');
+        if (choice != 0)
+        {
+            cout << "\nPress Enter to continue...";
+            cin.get();
+        }
 
-                bool business = (type == 1);
-                f.addPassenger(name, passport, seat, business);
-            }
-            else if (choice == 6) // Handle First Class Passenger
-            {
-                string name, passport, seat;
-                cout << "\nEnter First Class Passenger Name: ";
-                getline(cin, name);
-                cout << "Enter Passport No: ";
-                getline(cin, passport);
-                cout << "Enter Seat No: ";
-                getline(cin, seat);
-                f.addPassenger(new FirstClassPassenger(name, passport, seat));
-            }
-            else if (choice == 7) // Handle Staff Passenger
-            {
-                string name, passport, seat, empId;
-                cout << "\nEnter Staff Passenger Name: ";
-                getline(cin, name);
-                cout << "Enter Passport No: ";
-                getline(cin, passport);
-                cout << "Enter Seat No: ";
-                getline(cin, seat);
-                cout << "Enter Employee ID: ";
-                getline(cin, empId);
-                f.addPassenger(new StaffPassenger(name, passport, seat, empId));
-            }
-            else if (choice != 0)
-            {
-                cout << "Invalid choice! Please try again.\n";
-            }
-
-            if (choice != 0)
-            {
-                cout << "\nPress Enter to continue...";
-                cin.get();
-            }
-
-        } while (choice != 0);
-    }
-    catch (const std::bad_alloc& e)
-    {
-        // This will catch memory allocation failures.
-        cerr << "\nCRITICAL ERROR: A memory allocation failed. The program cannot continue." << endl;
-        cerr << "Details: " << e.what() << endl;
-        return 1; // Exit with an error code
-    }
-    catch (const std::exception& e)
-    {
-        // This is a general catch-all for other standard exceptions.
-        cerr << "\nAn unexpected error occurred: " << e.what() << endl;
-        return 1;
-    }
-    catch (...)
-    {
-        // This catches any other unknown exceptions.
-        cerr << "\nAn unknown fatal error occurred. The program will terminate." << endl;
-        return 1;
-    }
+    } while (choice != 0);
 
     cout << "\nExiting Airline Boarding System. Safe travels!\n";
     return 0;
